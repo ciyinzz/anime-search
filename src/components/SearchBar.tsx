@@ -1,46 +1,60 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { setQuery, fetchAnimeSuggestions, fetchAnimeResults, setCurrentPage } from '../features/search/searchSlice';
+// Import Redux actions for updating search text, suggestions, results, and pagination
 import { RootState, AppDispatch } from '../app/store';
 import { useEffect, useState, useRef } from 'react';
+// useEffect → run side effects (API calls)
+// useState → local component state
+// useRef → reference DOM elements for click detection
 
 export default function SearchBar() {
   const dispatch = useDispatch<AppDispatch>();
+  // Extract search-related state from Redux
   const { query, suggestions, loading } = useSelector((state: RootState) => state.search);
+   // Controls whether the dropdown is visible
   const [showDropdown, setShowDropdown] = useState(false);
+    // Reference to the dropdown container (used to detect clicks outside)
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const trimmedQuery = query.trim();
+    // If query is too short, close dropdown and stop API calls
     if (trimmedQuery.length <= 2) {
       setShowDropdown(false);
       return;
     }
 
+   // Add a debounce (wait 250ms after typing)
     const timeoutId = setTimeout(() => {
-      dispatch(fetchAnimeSuggestions(trimmedQuery));
-      dispatch(setCurrentPage(1));
-      dispatch(fetchAnimeResults({ query: trimmedQuery, page: 1 }));
-      setShowDropdown(true);
+      dispatch(fetchAnimeSuggestions(trimmedQuery));  // Fetch autocomplete suggestions
+      dispatch(setCurrentPage(1)); // Reset pagination to page 1
+      dispatch(fetchAnimeResults({ query: trimmedQuery, page: 1 })); // Fetch actual anime results
+      setShowDropdown(true); // Open dropdown
     }, 250);
 
-    return () => clearTimeout(timeoutId);
+    return () => clearTimeout(timeoutId);  // Cleanup on rapid typing
   }, [query, dispatch]);
 
+  // ------- Close dropdown when clicking outside ------- //
   useEffect(() => {
+     // If click is outside dropdown container, close it
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowDropdown(false);
       }
     };
+    // Listen for outside clicks
     document.addEventListener('mousedown', handleClickOutside);
+    // Cleanup listener on unmount
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // ------- Handle selecting a suggestion ------- //
   const handleSelect = (title: string) => {
-    dispatch(setQuery(title));
-    dispatch(setCurrentPage(1));
-    dispatch(fetchAnimeResults({ query: title, page: 1 }));
-    setShowDropdown(false);
+    dispatch(setQuery(title)); // Update search query in Redux
+    dispatch(setCurrentPage(1)); // Reset to first page
+    dispatch(fetchAnimeResults({ query: title, page: 1 })); // Fetch results for selected title
+    setShowDropdown(false); // Close dropdown
   };
 
   return (

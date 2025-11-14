@@ -1,17 +1,25 @@
 import { useDispatch, useSelector } from 'react-redux';
+// useDispatch → sends actions to Redux
+// useSelector → reads values from Redux store
 import { RootState, AppDispatch } from '../app/store';
+// Import TypeScript types for the store and dispatch
 import { setCurrentPage, fetchAnimeResults } from '../features/search/searchSlice';
+// Actions for updating the current page and fetching new results
 
 export default function Pagination() {
+  // Typed dispatch so TypeScript knows what actions can be dispatched
   const dispatch = useDispatch<AppDispatch>();
+  // Extract search-related values from Redux
   const { query, currentPage, totalPages } = useSelector((state: RootState) => state.search);
 
+  // Runs when a user clicks a page button
   const handlePageChange = (page: number) => {
-    dispatch(setCurrentPage(page));
-    dispatch(fetchAnimeResults({ query, page }));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    dispatch(setCurrentPage(page));  // Update Redux state for current page
+    dispatch(fetchAnimeResults({ query, page })); // Fetch new results for the selected page
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smoothly scroll back to top
   };
 
+    // Generate an array of page numbers (max 10 for cleaner UI)
   const pages = Array.from({ length: Math.min(totalPages, 10) }, (_, i) => i + 1);
 
   return (

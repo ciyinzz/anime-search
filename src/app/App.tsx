@@ -1,5 +1,5 @@
-import AppRoutes from '../routes/AppRoutes';
-import { BrowserRouter } from 'react-router-dom';
+import AppRoutes from '../routes/AppRoutes'; // Import the routing configuration for the app
+import { BrowserRouter } from 'react-router-dom'; // Enables client-side routing in React
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 

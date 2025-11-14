@@ -3,7 +3,7 @@
 A responsive anime search app built with React, TypeScript, Redux, Vite, and Tailwind CSS. Features autocomplete search, pagination, dark mode, and a polished UI.
 
 ## 🔗 Live Demo
-[View on Netlify](https://anime-search-wong.netlify.app)
+[View on Netlify](https://gilded-froyo-5a0b5c.netlify.app/)
 
 ## 🚀 Features
 - Instant search with autocomplete dropdown
